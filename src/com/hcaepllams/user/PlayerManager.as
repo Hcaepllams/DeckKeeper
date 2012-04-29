@@ -19,7 +19,7 @@ package com.hcaepllams.user
 		1984606585 Jacky
 		2218794712 Christin
 		 */
-		private const PLAYERS_NAME:Array = new Array("Will", "LM", "Jacky", "Cindy", "Sophie", "Candy", "Mavis", "Christin");
+		private const PLAYERS_NAME:Array = new Array("Will", "LM", "Jacky", "Cindy", "Sophie", "Candy", "Mavis", "Christie");
 		private var PLAYERS_UID:Dictionary = new Dictionary();
 		
 		private static var _instance:PlayerManager;
@@ -52,7 +52,7 @@ package com.hcaepllams.user
 			PLAYERS_UID["Candy"] = "1993550360";
 			PLAYERS_UID["Cindy"] = "1627316017";
 			PLAYERS_UID["Jacky"] = "1984606585";
-			PLAYERS_UID["Christin"] = "2218794712";
+			PLAYERS_UID["Christie"] = "2218794712";
 			loadAUser();
 		}
 	
