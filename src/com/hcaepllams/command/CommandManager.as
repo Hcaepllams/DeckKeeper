@@ -37,10 +37,13 @@ package com.hcaepllams.command
 			switch (type)
 			{
 				case CommandType.ADD:
-					command = new CommandAsk(_mb, status.id);
+					command = new CommandAsk(_mb, status);
+					break;
+				case CommandType.ABSENT:
+					command = new CommandAbsent(_mb, status);
 					break;
 				default:
-					command = new Command(_mb);
+					command = new Command(_mb, status);
 					break;
 			}
 			

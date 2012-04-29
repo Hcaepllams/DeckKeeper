@@ -10,7 +10,13 @@ package
 	import com.sina.microblog.events.MicroBlogEvent;
 	
 	import flash.display.Sprite;
+	import flash.events.Event;
 	import flash.events.TimerEvent;
+	import flash.net.FileReference;
+	import flash.net.SharedObject;
+	import flash.net.URLLoader;
+	import flash.net.URLRequest;
+	import flash.net.URLVariables;
 	import flash.utils.Timer;
 	
 	public class DeckKeeper extends Sprite
@@ -20,6 +26,7 @@ package
 		private var playerManager:PlayerManager;
 		
 		private var lastMentionID:String = "0";
+		private var sharedObject:SharedObject;
 		
 		public function DeckKeeper()
 		{
@@ -46,10 +53,22 @@ package
 			_mb.removeEventListener(MicroBlogEvent.VERIFY_CREDENTIALS_RESULT, onVerifyCredentialsResult);
 			_mb.removeEventListener(MicroBlogErrorEvent.VERIFY_CREDENTIALS_ERROR, onVerifyCredentialsError);
 			
-			init();
+			initConfig();
 		}
 		
-		private function init():void
+		private function initConfig():void
+		{
+			sharedObject = SharedObject.getLocal("savedData");
+			lastMentionID = sharedObject.data.lastMentionID;
+			if (lastMentionID == null)
+			{
+				lastMentionID = "0";
+			}
+			
+			initLogic();
+		}
+		
+		private function initLogic():void
 		{
 			commandManager = CommandManager.instance;
 			commandManager.mb = _mb;
@@ -78,8 +97,12 @@ package
 			{
 				lastMentionID = (result[result.length - 1] as MicroBlogStatus).id;
 			}
-			//3439952694360725
-			//3439821911779256
+			updateConfig();
+		}
+		
+		private function updateConfig():void
+		{
+			sharedObject.data.lastMentionID = lastMentionID;
 		}
 		
 		private function phraseMentions(mentions:Array):void
