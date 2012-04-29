@@ -5,23 +5,39 @@ package com.hcaepllams.command
 	import com.hcaepllams.user.Player;
 	import com.hcaepllams.utils.MyDate;
 	import com.sina.microblog.MicroBlog;
+	import com.sina.microblog.data.MicroBlogComment;
 	import com.sina.microblog.data.MicroBlogStatus;
 
 	public class CommandAsk extends Command
 	{
-		private var statusID:String;
+		private var statusOrCommentID:String;
 		
-		public function CommandAsk(mb:MicroBlog, status:MicroBlogStatus)
+		public function CommandAsk(mb:MicroBlog, statusOrComment:Object)
 		{
-			super (mb, status);
-			statusID = status.id;
+			super (mb, statusOrComment);
+			if (statusOrComment is MicroBlogStatus)
+			{
+				statusOrCommentID = (statusOrComment as MicroBlogStatus).id;
+			}
+			else
+			{
+				statusOrCommentID = (statusOrComment as MicroBlogComment).id;
+			}
 			var date:MyDate = new MyDate(new Date());
 			var game:Game = GameManager.instance.getGameByDate(date);
 			
-			var attendPlayer:Vector.<Player> = game.getPlayers();
-			var absentPlayer:Vector.<Player> = game.getAbsentPlayers();
+			if (game != null)
+			{
+				var attendPlayer:Vector.<Player> = game.getPlayers();
 			
-			initText(attendPlayer, absentPlayer);
+				var absentPlayer:Vector.<Player> = game.getAbsentPlayers();
+			
+				initText(attendPlayer, absentPlayer);
+			}
+			else
+			{
+				text = "Who let's the dogs out ~~ Dong Dong Dong Dong";
+			}
 		}
 		
 		private function initText(attends:Vector.<Player>, absents:Vector.<Player>):void
@@ -63,7 +79,14 @@ package com.hcaepllams.command
 		
 		override public function excute():void
 		{
-			_mb.commentStatus(statusID, text);
+			if (_statusOrComment is MicroBlogStatus)
+			{
+				_mb.commentStatus(statusOrCommentID, text);
+			}
+			else
+			{
+				_mb.replyStatus((_statusOrComment as MicroBlogComment).status.id, text, (_statusOrComment as MicroBlogComment).id);
+			}
 			_mb.updateStatus(text);
 		}
 	}

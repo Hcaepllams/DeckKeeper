@@ -2,8 +2,12 @@ package
 {
 	import com.hcaepllams.command.Command;
 	import com.hcaepllams.command.CommandManager;
+	import com.hcaepllams.game.GameManager;
+	import com.hcaepllams.user.Player;
 	import com.hcaepllams.user.PlayerManager;
+	import com.hcaepllams.utils.MyDate;
 	import com.sina.microblog.MicroBlog;
+	import com.sina.microblog.data.MicroBlogComment;
 	import com.sina.microblog.data.MicroBlogStatus;
 	import com.sina.microblog.data.MicroBlogUser;
 	import com.sina.microblog.events.MicroBlogErrorEvent;
@@ -26,7 +30,10 @@ package
 		private var playerManager:PlayerManager;
 		
 		private var lastMentionID:String = "0";
+		private var lastCommentID:String = "0";
 		private var sharedObject:SharedObject;
+		
+		private var announced:Boolean = false;
 		
 		public function DeckKeeper()
 		{
@@ -52,6 +59,9 @@ package
 		{
 			_mb.removeEventListener(MicroBlogEvent.VERIFY_CREDENTIALS_RESULT, onVerifyCredentialsResult);
 			_mb.removeEventListener(MicroBlogErrorEvent.VERIFY_CREDENTIALS_ERROR, onVerifyCredentialsError);
+			
+			_mb.addEventListener(MicroBlogEvent.LOAD_MENSIONS_RESULT, onMentionsLoaded);
+			_mb.addEventListener(MicroBlogEvent.LOAD_COMMENTS_TO_ME_RESULT, onCommentsLoaded);
 			
 			initConfig();
 		}
@@ -84,18 +94,74 @@ package
 		
 		private function update(e:TimerEvent):void
 		{
-			_mb.addEventListener(MicroBlogEvent.LOAD_MENSIONS_RESULT, onMentionsLoaded);
+			
 			_mb.loadMentions(lastMentionID);
+			
+			
+			_mb.loadCommentsToMe(lastCommentID);
+			
+			var date:Date = new Date();
+			if (date.hours == 13)
+			{
+				var myDate:MyDate = new MyDate(date);
+				anounceANewGame(myDate);
+				GameManager.instance.createNewGame(myDate);
+			}
+			
+			if (date.hours == 14)
+			{
+				anounceAGameAtTime(myDate);
+			}
+		}
+		
+		private function anounceANewGame(myDate:MyDate):void
+		{
+			if (GameManager.instance.getGameByDate(myDate) == null)
+			{
+				var text:String = new String();
+				text = new Date().time + " 今天有谁中午不杀的？" + PlayerManager.instance.getAtStrings();
+				_mb.updateStatus(text);
+			}
+			announced = false;
+		}
+		
+		private function anounceAGameAtTime(myDate:MyDate):void
+		{
+			if (announced == true)
+			{
+				return;
+			}
+			else
+			{
+				var players:Vector.<Player> = GameManager.instance.getGameByDate(myDate).getPlayers();
+				var text:String = "走了呀";
+				for (var i:int = 0; i < players.length; i ++)
+				{
+					text = text + "@" + (players[i] as Player).microBlogUser.screenName + " ";
+				}
+				_mb.updateStatus(text);
+				announced = true;
+			}
 		}
 		
 		private function onMentionsLoaded(e:MicroBlogEvent):void
 		{
-			_mb.removeEventListener(MicroBlogEvent.LOAD_MENSIONS_RESULT, onMentionsLoaded);
 			var result:Array = e.result as Array;
 			phraseMentions(result);
 			if (result.length > 0)
 			{
 				lastMentionID = (result[result.length - 1] as MicroBlogStatus).id;
+			}
+			updateConfig();
+		}
+		
+		private function onCommentsLoaded(e:MicroBlogEvent):void
+		{
+			var result:Array = e.result as Array;
+			phraseComments(result);
+			if (result.length > 0)
+			{
+				lastCommentID = (result[result.length - 1] as MicroBlogComment).id;
 			}
 			updateConfig();
 		}
@@ -115,9 +181,25 @@ package
 			}
 		}
 		
+		private function phraseComments(comments:Array):void
+		{
+			var comment:MicroBlogComment;
+			for (var i:int = 0; i < comments.length; i ++)
+			{
+				comment = comments[i] as MicroBlogComment;
+				checkComment(comment);
+			}
+		}
+		
 		private function checkStatus(status:MicroBlogStatus):void
 		{
 			var command:Command = commandManager.createCommandByType(commandManager.phraseCommandByText(status.text), status);
+			command.excute();
+		}
+		
+		private function checkComment(comment:MicroBlogComment):void
+		{
+			var command:Command = commandManager.createCommandByType(commandManager.phraseCommandByText(comment.text), comment);
 			command.excute();
 		}
 		

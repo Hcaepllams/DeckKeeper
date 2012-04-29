@@ -7,12 +7,12 @@ package com.hcaepllams.command
 	{
 		protected var text:String = "Who let's the dogs out!";
 		protected var _mb:MicroBlog;
-		protected var _status:MicroBlogStatus;
+		protected var _statusOrComment:Object;
 		
-		public function Command(mb:MicroBlog, status:MicroBlogStatus)
+		public function Command(mb:MicroBlog, statusOrComment:Object)
 		{
 			_mb = mb;
-			_status = status;
+			_statusOrComment = statusOrComment;
 		}
 		
 		public function excute():void

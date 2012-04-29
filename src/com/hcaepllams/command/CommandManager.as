@@ -31,19 +31,19 @@ package com.hcaepllams.command
 			_mb = i;
 		}
 		
-		public function createCommandByType(type:String, status:MicroBlogStatus):Command
+		public function createCommandByType(type:String, statusOrComment:Object):Command
 		{
 			var command:Command;
 			switch (type)
 			{
 				case CommandType.ADD:
-					command = new CommandAsk(_mb, status);
+					command = new CommandAsk(_mb, statusOrComment);
 					break;
 				case CommandType.ABSENT:
-					command = new CommandAbsent(_mb, status);
+					command = new CommandAbsent(_mb, statusOrComment);
 					break;
 				default:
-					command = new Command(_mb, status);
+					command = new Command(_mb, statusOrComment);
 					break;
 			}
 			

@@ -19,7 +19,7 @@ package com.hcaepllams.user
 		1984606585 Jacky
 		2218794712 Christin
 		 */
-		private const PLAYERS_NAME:Array = new Array("Will", "LM", "Jacky", "Cindy", "Sophie", "Candy", "Mavis", "Christin", "Test");
+		private const PLAYERS_NAME:Array = new Array("Will", "LM", "Jacky", "Cindy", "Sophie", "Candy", "Mavis", "Christin");
 		private var PLAYERS_UID:Dictionary = new Dictionary();
 		
 		private static var _instance:PlayerManager;
@@ -53,7 +53,6 @@ package com.hcaepllams.user
 			PLAYERS_UID["Cindy"] = "1627316017";
 			PLAYERS_UID["Jacky"] = "1984606585";
 			PLAYERS_UID["Christin"] = "2218794712";
-			PLAYERS_UID["Test"] = "2785713952";
 			loadAUser();
 		}
 	
@@ -113,6 +112,16 @@ package com.hcaepllams.user
 		public function PlayerManager()
 		{
 			_fullPlayerList = new Vector.<Player>;
+		}
+		
+		public function getAtStrings():String
+		{
+			var text:String = new String;
+			for (var i:int = 0; i < _fullPlayerList.length; i ++)
+			{
+				text = text + "@" + (_fullPlayerList[i] as Player).microBlogUser.screenName + " ";
+			}
+			return text;
 		}
 	}
 }

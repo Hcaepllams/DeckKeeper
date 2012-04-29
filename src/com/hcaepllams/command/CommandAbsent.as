@@ -6,6 +6,7 @@ package com.hcaepllams.command
 	import com.hcaepllams.user.PlayerManager;
 	import com.hcaepllams.utils.MyDate;
 	import com.sina.microblog.MicroBlog;
+	import com.sina.microblog.data.MicroBlogComment;
 	import com.sina.microblog.data.MicroBlogStatus;
 	import com.sina.microblog.data.MicroBlogUser;
 	
@@ -13,16 +14,31 @@ package com.hcaepllams.command
 	{
 		private var absentUser:MicroBlogUser;
 		
-		public function CommandAbsent(mb:MicroBlog, status:MicroBlogStatus)
+		public function CommandAbsent(mb:MicroBlog, statusOrComment:Object)
 		{
-			super(mb, status);
+			super(mb, statusOrComment);
 			
 			var date:MyDate = new MyDate(new Date());
 			var game:Game = GameManager.instance.getGameByDate(date);
-			absentUser = status.user;
 			
-			game.removePlayers(PlayerManager.instance.getPlayerByUserID(absentUser.id));
-			initText(game.getPlayers(), game.getAbsentPlayers());
+			if (game != null)
+			{
+				if (statusOrComment is MicroBlogStatus)
+				{
+					absentUser = (statusOrComment as MicroBlogStatus).user;
+				}
+				else
+				{
+					absentUser = (statusOrComment as MicroBlogComment).user;
+				}
+			
+				game.removePlayers(PlayerManager.instance.getPlayerByUserID(absentUser.id));
+				initText(game.getPlayers(), game.getAbsentPlayers());
+			}
+			else
+			{
+				text = "Who let's the dogs out ~~ Dong Dong Dong Dong";
+			}
 		}
 		
 		private function initText(attends:Vector.<Player>, absents:Vector.<Player>):void
@@ -33,7 +49,7 @@ package com.hcaepllams.command
 		override public function excute():void
 		{
 			_mb.updateStatus(text);
-			var command:CommandAsk = new CommandAsk(_mb, _status);
+			var command:CommandAsk = new CommandAsk(_mb, _statusOrComment);
 			command.excute();
 		}
 	}

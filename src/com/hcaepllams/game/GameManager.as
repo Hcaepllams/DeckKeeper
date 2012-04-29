@@ -30,10 +30,6 @@ package com.hcaepllams.game
 		
 		public function getGameByDate(date:MyDate):Game
 		{
-			if (games[date.getMyDate()] == null)
-			{
-				createNewGame(date);
-			}
 			return games[date.getMyDate()];
 		}
 		
