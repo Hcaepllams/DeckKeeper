@@ -2,6 +2,8 @@ package com.hcaepllams.command
 {
 	import com.hcaepllams.game.Game;
 	import com.hcaepllams.game.GameManager;
+	import com.hcaepllams.message.Message;
+	import com.hcaepllams.message.MessageManager;
 	import com.hcaepllams.user.Player;
 	import com.hcaepllams.utils.MyDate;
 	import com.sina.microblog.MicroBlog;
@@ -79,15 +81,8 @@ package com.hcaepllams.command
 		
 		override public function excute():void
 		{
-			if (_statusOrComment is MicroBlogStatus)
-			{
-				_mb.commentStatus(statusOrCommentID, text);
-			}
-			else
-			{
-				_mb.replyStatus((_statusOrComment as MicroBlogComment).status.id, text, (_statusOrComment as MicroBlogComment).id);
-			}
-			_mb.updateStatus(text);
+			var message:Message = new Message(text, CommandType.ASK, GameManager.instance.getGameByDate(new MyDate(new Date)), _statusOrComment);
+			MessageManager.instance.addAMessage(message);
 		}
 	}
 }

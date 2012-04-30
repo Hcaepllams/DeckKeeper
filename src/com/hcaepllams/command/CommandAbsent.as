@@ -2,6 +2,8 @@ package com.hcaepllams.command
 {
 	import com.hcaepllams.game.Game;
 	import com.hcaepllams.game.GameManager;
+	import com.hcaepllams.message.Message;
+	import com.hcaepllams.message.MessageManager;
 	import com.hcaepllams.user.Player;
 	import com.hcaepllams.user.PlayerManager;
 	import com.hcaepllams.utils.MyDate;
@@ -48,8 +50,9 @@ package com.hcaepllams.command
 		
 		override public function excute():void
 		{
-			_mb.updateStatus(text);
-			var command:CommandAsk = new CommandAsk(_mb, _statusOrComment);
+			var message:Message = new Message(text, CommandType.ABSENT, GameManager.instance.getGameByDate(new MyDate(new Date)), _statusOrComment);
+			MessageManager.instance.addAMessage(message);
+			var command:CommandAsk = new CommandAsk(_mb, null);
 			command.excute();
 		}
 	}

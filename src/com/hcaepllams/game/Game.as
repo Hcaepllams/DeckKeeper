@@ -28,6 +28,16 @@ package com.hcaepllams.game
 			return _absentPlayers;
 		}
 		
+		private function setPlayers(value:Vector.<Player>):void
+		{
+			_players = value;
+		}
+		
+		private function setAbsentPlayers(value:Vector.<Player>):void
+		{
+			_absentPlayers = value;
+		}
+		
 		public function removePlayers(player:Player):Vector.<Player>
 		{
 			var index:int = _players.indexOf(player);
@@ -38,6 +48,59 @@ package com.hcaepllams.game
 			}
 			
 			return _players;
+		}
+		
+		public function duplicated():Game
+		{
+			var game:Game = new Game(new MyDate(new Date));
+			var absents:Vector.<Player> = new Vector.<Player>;
+			for (var i:int = 0; i < _absentPlayers.length; i ++)
+			{
+				absents.push(_absentPlayers[i]);
+			}
+			
+			var players:Vector.<Player> = new Vector.<Player>;
+			for (var j:int = 0; j < _players.length; j ++)
+			{
+				players.push(_players[j]);
+			}
+			
+			game.setPlayers(players);
+			game.setAbsentPlayers(absents);
+			return game;
+		}
+		
+		public function equal(game:Game):Boolean
+		{
+			var players:Vector.<Player> = game.getPlayers();
+			var absents:Vector.<Player> = game.getAbsentPlayers();
+			
+			if (players.length != _players.length)
+			{
+				return false;
+			}
+			
+			if (absents.length != _absentPlayers.length)
+			{
+				return false;
+			}
+			
+			for (var i:int = 0; i < players.length; i ++)
+			{
+				if (_players.indexOf(players[i]) < 0)
+				{
+					return false;
+				}
+			}
+			
+			for (var j:int = 0; j < absents.length; j ++)
+			{
+				if (_absentPlayers.indexOf(absents[i]) < 0)
+				{
+					return false;
+				}
+			}
+			return true;
 		}
 	}
 }

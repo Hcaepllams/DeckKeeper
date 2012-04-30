@@ -3,6 +3,8 @@ package
 	import com.hcaepllams.command.Command;
 	import com.hcaepllams.command.CommandManager;
 	import com.hcaepllams.game.GameManager;
+	import com.hcaepllams.message.Message;
+	import com.hcaepllams.message.MessageManager;
 	import com.hcaepllams.user.Player;
 	import com.hcaepllams.user.PlayerManager;
 	import com.hcaepllams.utils.MyDate;
@@ -28,12 +30,14 @@ package
 		private var _mb:MicroBlog= new MicroBlog();
 		private var commandManager:CommandManager;
 		private var playerManager:PlayerManager;
+		private var messageManager:MessageManager;
 		
 		private var lastMentionID:String = "0";
 		private var lastCommentID:String = "0";
 		private var sharedObject:SharedObject;
 		
-		private var announced:Boolean = false;
+		private var announcedNewGame:Boolean = false;
+		private var announcedTheGameBegin:Boolean = false;
 		
 		public function DeckKeeper()
 		{
@@ -87,9 +91,13 @@ package
 			playerManager.mb = _mb;
 			playerManager.initAllPlayers();
 			
+			messageManager = MessageManager.instance;
+			messageManager.mb = _mb;
+			
 			var timer:Timer = new Timer(10000);
 			timer.addEventListener(TimerEvent.TIMER, update);
 			timer.start();
+			
 		}
 		
 		private function update(e:TimerEvent):void
@@ -101,33 +109,41 @@ package
 			_mb.loadCommentsToMe(lastCommentID);
 			
 			var date:Date = new Date();
-			if (date.hours == 13)
+			if (date.hours == 23)
 			{
 				var myDate:MyDate = new MyDate(date);
-				anounceANewGame(myDate);
 				GameManager.instance.createNewGame(myDate);
+				anounceANewGame(myDate);
 			}
 			
-			if (date.hours == 14)
+			if (date.hours == 23 && date.minutes == 35)
 			{
 				anounceAGameAtTime(myDate);
+			}
+			
+			if (date.hours == 24)
+			{
+				announcedNewGame = false;
+				announcedTheGameBegin = false;
 			}
 		}
 		
 		private function anounceANewGame(myDate:MyDate):void
 		{
-			if (GameManager.instance.getGameByDate(myDate) == null)
+			if (announcedNewGame == false)
 			{
 				var text:String = new String();
 				text = new Date().time + " 今天有谁中午不杀的？" + PlayerManager.instance.getAtStrings();
-				_mb.updateStatus(text);
+				var message:Message = new Message(text, "", GameManager.instance.getGameByDate(new MyDate(new Date)), null);
+				messageManager.addAMessage(message);
+				announcedNewGame = true;
 			}
-			announced = false;
+			
 		}
 		
 		private function anounceAGameAtTime(myDate:MyDate):void
 		{
-			if (announced == true)
+			if (announcedTheGameBegin == true)
 			{
 				return;
 			}
@@ -139,8 +155,10 @@ package
 				{
 					text = text + "@" + (players[i] as Player).microBlogUser.screenName + " ";
 				}
-				_mb.updateStatus(text);
-				announced = true;
+				var message:Message = new Message(text, "", GameManager.instance.getGameByDate(new MyDate(new Date)), null);
+				messageManager.addAMessage(message);
+				messageManager.run();
+				announcedTheGameBegin = true;
 			}
 		}
 		
@@ -205,7 +223,7 @@ package
 		
 		private function onVerifyCredentialsError(e:MicroBlogErrorEvent):void
 		{
-			
+			trace (e);
 		}
 	}
 }

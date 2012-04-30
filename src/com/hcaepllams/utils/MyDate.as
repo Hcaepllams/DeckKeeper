@@ -2,7 +2,7 @@ package com.hcaepllams.utils
 {
 	public class MyDate
 	{
-		var _date:Date
+		private var _date:Date
 		public function MyDate(date:Date)
 		{
 			_date = date;

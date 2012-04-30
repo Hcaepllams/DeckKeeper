@@ -122,6 +122,7 @@ package com.hcaepllams.user
 				text = text + "@" + (_fullPlayerList[i] as Player).microBlogUser.screenName + " ";
 			}
 			return text;
+			//return "@Hcaepllams";
 		}
 	}
 }
