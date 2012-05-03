@@ -1,0 +1,42 @@
+﻿CREATE SCHEMA `deckkeeper` ;
+
+CREATE  TABLE `deckkeeper`.`games` (
+
+  `idGames` INT NOT NULL ,
+
+  `Date` DATETIME NULL ,
+  
+  `Players` VARCHAR(45) NULL ,
+
+  PRIMARY KEY (`idGames`) );
+
+CREATE  TABLE `deckkeeper`.`players` (
+
+  `idPlayer` INT NOT NULL ,
+
+  `playerCommonName` VARCHAR(45) NULL ,
+  
+  `playerWeiboUID` VARCHAR(45) NULL ,
+
+  PRIMARY KEY (`idPlayer`) );
+
+INSERT INTO `deckkeeper`.`players` (`idPlayer`, `playerCommonName`, `playerWeiboUID`) VALUES (0, 'Will', '1808232384');
+
+INSERT INTO `deckkeeper`.`players` (`idPlayer`, `playerCommonName`, `playerWeiboUID`) VALUES (1, 'Sophie', '1895460147');
+
+INSERT INTO `deckkeeper`.`players` (`idPlayer`, `playerCommonName`, `playerWeiboUID`) VALUES (2, 'LM', '2188386820');
+
+INSERT INTO `deckkeeper`.`players` (`idPlayer`, `playerCommonName`, `playerWeiboUID`) VALUES (3, 'Mavis', '2017834591');
+
+INSERT INTO `deckkeeper`.`players` (`idPlayer`, `playerCommonName`, `playerWeiboUID`) VALUES (4, 'Candy', '1993550360');
+
+INSERT INTO `deckkeeper`.`players` (`idPlayer`, `playerCommonName`, `playerWeiboUID`) VALUES (5, 'Cindy', '1627316017');
+
+INSERT INTO `deckkeeper`.`players` (`idPlayer`, `playerCommonName`, `playerWeiboUID`) VALUES (6, 'Jacky', '1984606585');
+
+INSERT INTO `deckkeeper`.`players` (`idPlayer`, `playerCommonName`, `playerWeiboUID`) VALUES (7, 'Christie', '2218794712');
+
+INSERT INTO `deckkeeper`.`games` (`idGames`, `Date`, `Players`) VALUES (0, '2012.5.3', '0,1,2,3,4,5,6,7');
+
+
+

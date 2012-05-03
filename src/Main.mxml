@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute"
+				creationComplete="onCreationComplete(event)">
+	<mx:Script>
+		<![CDATA[
+			import com.hcaepllams.DeckKeeper;
+			import mx.events.FlexEvent;
+			private function onCreationComplete(event:FlexEvent):void
+			{
+				var deckKeeper:DeckKeeper = new DeckKeeper();
+			}
+		]]>
+	</mx:Script>
+	
+</mx:Application>
