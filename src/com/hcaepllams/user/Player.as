@@ -6,6 +6,7 @@ package com.hcaepllams.user
 	{
 		private var _name:String;
 		private var _user:MicroBlogUser;
+		private var _index:int;
 		
 		public function get microBlogUser():MicroBlogUser
 		{
@@ -17,8 +18,14 @@ package com.hcaepllams.user
 			return _name;
 		}
 		
-		public function Player(name:String, user:MicroBlogUser)
+		public function get index():int
 		{
+			return _index;
+		}
+		
+		public function Player(index:int, name:String, user:MicroBlogUser)
+		{
+			_index = index;
 			_name = name;
 			_user = user;
 		}

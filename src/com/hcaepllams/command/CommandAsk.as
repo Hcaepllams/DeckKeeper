@@ -17,13 +17,20 @@ package com.hcaepllams.command
 		public function CommandAsk(mb:MicroBlog, statusOrComment:Object)
 		{
 			super (mb, statusOrComment);
-			if (statusOrComment is MicroBlogStatus)
+			if (statusOrComment == null)
 			{
-				statusOrCommentID = (statusOrComment as MicroBlogStatus).id;
+				statusOrCommentID = "0";
 			}
 			else
 			{
-				statusOrCommentID = (statusOrComment as MicroBlogComment).id;
+				if (statusOrComment is MicroBlogStatus)
+				{
+					statusOrCommentID = (statusOrComment as MicroBlogStatus).id;
+				}
+				else
+				{
+					statusOrCommentID = (statusOrComment as MicroBlogComment).id;
+				}
 			}
 			var date:MyDate = new MyDate(new Date());
 			var game:Game = GameManager.instance.getGameByDate(date);

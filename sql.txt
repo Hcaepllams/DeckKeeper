@@ -2,17 +2,17 @@
 
 CREATE  TABLE `deckkeeper`.`games` (
 
-  `idGames` INT NOT NULL ,
+  `Date` DATE NOT NULL ,
 
-  `Date` DATETIME NULL ,
-  
   `Players` VARCHAR(45) NULL ,
 
-  PRIMARY KEY (`idGames`) );
+  PRIMARY KEY (`Date`) );
+
+
 
 CREATE  TABLE `deckkeeper`.`players` (
 
-  `idPlayer` INT NOT NULL ,
+  `idPlayer` INT NOT NULL AUTO_INCREMENT ,
 
   `playerCommonName` VARCHAR(45) NULL ,
   
@@ -20,23 +20,25 @@ CREATE  TABLE `deckkeeper`.`players` (
 
   PRIMARY KEY (`idPlayer`) );
 
-INSERT INTO `deckkeeper`.`players` (`idPlayer`, `playerCommonName`, `playerWeiboUID`) VALUES (0, 'Will', '1808232384');
+INSERT INTO `deckkeeper`.`players` (`idPlayer`, `playerCommonName`, `playerWeiboUID`) VALUES (1, 'Will', '1808232384');
 
-INSERT INTO `deckkeeper`.`players` (`idPlayer`, `playerCommonName`, `playerWeiboUID`) VALUES (1, 'Sophie', '1895460147');
+INSERT INTO `deckkeeper`.`players` (`idPlayer`, `playerCommonName`, `playerWeiboUID`) VALUES (2, 'Sophie', '1895460147');
 
-INSERT INTO `deckkeeper`.`players` (`idPlayer`, `playerCommonName`, `playerWeiboUID`) VALUES (2, 'LM', '2188386820');
+INSERT INTO `deckkeeper`.`players` (`idPlayer`, `playerCommonName`, `playerWeiboUID`) VALUES (3, 'LM', '2188386820');
 
-INSERT INTO `deckkeeper`.`players` (`idPlayer`, `playerCommonName`, `playerWeiboUID`) VALUES (3, 'Mavis', '2017834591');
+INSERT INTO `deckkeeper`.`players` (`idPlayer`, `playerCommonName`, `playerWeiboUID`) VALUES (4, 'Mavis', '2017834591');
 
-INSERT INTO `deckkeeper`.`players` (`idPlayer`, `playerCommonName`, `playerWeiboUID`) VALUES (4, 'Candy', '1993550360');
+INSERT INTO `deckkeeper`.`players` (`idPlayer`, `playerCommonName`, `playerWeiboUID`) VALUES (5, 'Candy', '1993550360');
 
-INSERT INTO `deckkeeper`.`players` (`idPlayer`, `playerCommonName`, `playerWeiboUID`) VALUES (5, 'Cindy', '1627316017');
+INSERT INTO `deckkeeper`.`players` (`idPlayer`, `playerCommonName`, `playerWeiboUID`) VALUES (6, 'Cindy', '1627316017');
 
-INSERT INTO `deckkeeper`.`players` (`idPlayer`, `playerCommonName`, `playerWeiboUID`) VALUES (6, 'Jacky', '1984606585');
+INSERT INTO `deckkeeper`.`players` (`idPlayer`, `playerCommonName`, `playerWeiboUID`) VALUES (7, 'Jacky', '1984606585');
 
-INSERT INTO `deckkeeper`.`players` (`idPlayer`, `playerCommonName`, `playerWeiboUID`) VALUES (7, 'Christie', '2218794712');
+INSERT INTO `deckkeeper`.`players` (`idPlayer`, `playerCommonName`, `playerWeiboUID`) VALUES (8, 'Christie', '2218794712');
 
-INSERT INTO `deckkeeper`.`games` (`idGames`, `Date`, `Players`) VALUES (0, '2012.5.3', '0,1,2,3,4,5,6,7');
+INSERT INTO `deckkeeper`.`games` (`Date`, `Players`) VALUES ('2012.5.3', '1,2,3,4,5,6,7,8');
+
+UPDATE `deckkeeper`.`games` SET `Players`='1,2,3,4,5,6,7,8' WHERE `Date`='2012-04-05';
 
 
 

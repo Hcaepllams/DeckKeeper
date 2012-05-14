@@ -23,6 +23,23 @@ package com.hcaepllams.game
 			return _players;
 		}
 		
+		public function getPlayersIndexString():String
+		{
+			var returnText:String = "";
+			for (var i:int = 0; i < _players.length; i ++)
+			{
+				if (i == _players.length - 1)
+				{
+					returnText += (_players[i] as Player).index;
+				} 
+				else
+				{
+					returnText += (_players[i] as Player).index + ",";
+				}
+			}
+			return returnText;
+		}
+		
 		public function getAbsentPlayers():Vector.<Player>
 		{
 			return _absentPlayers;

@@ -5,9 +5,13 @@ package com.hcaepllams
 	import com.hcaepllams.game.GameManager;
 	import com.hcaepllams.message.Message;
 	import com.hcaepllams.message.MessageManager;
+	import com.hcaepllams.sqlDal.SQLDalManager;
 	import com.hcaepllams.user.Player;
 	import com.hcaepllams.user.PlayerManager;
 	import com.hcaepllams.utils.MyDate;
+	import com.maclema.mysql.Connection;
+	import com.maclema.mysql.Statement;
+	import com.maclema.mysql.events.MySqlErrorEvent;
 	import com.sina.microblog.MicroBlog;
 	import com.sina.microblog.data.MicroBlogComment;
 	import com.sina.microblog.data.MicroBlogStatus;
@@ -25,12 +29,17 @@ package com.hcaepllams
 	import flash.net.URLVariables;
 	import flash.utils.Timer;
 	
+	import mx.rpc.AsyncResponder;
+	
 	public class DeckKeeper extends Sprite
 	{
 		private var _mb:MicroBlog= new MicroBlog();
+		private var _con:Connection;
+		private var _state:Statement;
 		private var commandManager:CommandManager;
 		private var playerManager:PlayerManager;
 		private var messageManager:MessageManager;
+		private var gameManager:GameManager;
 		
 		private var lastMentionID:String = "0";
 		private var lastCommentID:String = "0";
@@ -76,17 +85,49 @@ package com.hcaepllams
 			lastMentionID = sharedObject.data.lastMentionID;
 			lastCommentID = sharedObject.data.lastCommentID;
 			
-			initLogic();
+			if (lastMentionID == null)
+			{
+				lastMentionID = "0";
+			}
+			
+			if (lastCommentID == null)
+			{
+				lastCommentID = "0";
+			}
+			
+			initConnection();			
 		}
 		
+		private function initConnection():void
+		{	
+ 	    	_con = new Connection("127.0.0.1", 3306, "root", "", "deckkeeper");
+ 	    	
+        	_con.addEventListener(Event.CONNECT, handleConnected);        	
+        	_con.addEventListener(MySqlErrorEvent.SQL_ERROR, handleError);
+        	_con.connect();			
+		}
+		
+		private function handleConnected(e:Event):void {
+	        _state = _con.createStatement();
+	        initLogic();
+		}
+		
+		private function handleError(e:MySqlErrorEvent):void {
+        	trace (e.text);
+        }
+			
 		private function initLogic():void
 		{
+			SQLDalManager.instance.state = _state;
+			
 			commandManager = CommandManager.instance;
 			commandManager.mb = _mb;
 			
 			playerManager = PlayerManager.instance;
 			playerManager.mb = _mb;
 			playerManager.initAllPlayers();
+			
+			gameManager = GameManager.instance;
 			
 			messageManager = MessageManager.instance;
 			messageManager.mb = _mb;
@@ -99,21 +140,20 @@ package com.hcaepllams
 		
 		private function update(e:TimerEvent):void
 		{
-			
 			_mb.loadMentions(lastMentionID);
 			
 			
 			_mb.loadCommentsToMe(lastCommentID);
 			
 			var date:Date = new Date();
-			if (date.hours == 23)
+			if (date.hours == 17)
 			{
 				var myDate:MyDate = new MyDate(date);
-				GameManager.instance.createNewGame(myDate);
+				gameManager.createNewGame(myDate);
 				anounceANewGame(myDate);
 			}
 			
-			if (date.hours == 23 && date.minutes == 35)
+			if (date.hours == 15)
 			{
 				anounceAGameAtTime(myDate);
 			}
@@ -130,8 +170,8 @@ package com.hcaepllams
 			if (announcedNewGame == false)
 			{
 				var text:String = new String();
-				text = new Date().time + " 今天有谁中午不杀的？" + PlayerManager.instance.getAtStrings();
-				var message:Message = new Message(text, "", GameManager.instance.getGameByDate(new MyDate(new Date)), null);
+				text = new Date().time + " 今天有谁中午不杀的？" + playerManager.getAtStrings();
+				var message:Message = new Message(text, "", gameManager.getGameByDate(new MyDate(new Date)), null);
 				messageManager.addAMessage(message);
 				announcedNewGame = true;
 			}
@@ -146,13 +186,13 @@ package com.hcaepllams
 			}
 			else
 			{
-				var players:Vector.<Player> = GameManager.instance.getGameByDate(myDate).getPlayers();
+				var players:Vector.<Player> = gameManager.getGameByDate(myDate).getPlayers();
 				var text:String = "走了呀";
 				for (var i:int = 0; i < players.length; i ++)
 				{
 					text = text + "@" + (players[i] as Player).microBlogUser.screenName + " ";
 				}
-				var message:Message = new Message(text, "", GameManager.instance.getGameByDate(new MyDate(new Date)), null);
+				var message:Message = new Message(text, "", gameManager.getGameByDate(new MyDate(new Date)), null);
 				messageManager.addAMessage(message);
 				messageManager.run();
 				announcedTheGameBegin = true;

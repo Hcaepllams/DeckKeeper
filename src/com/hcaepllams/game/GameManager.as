@@ -1,6 +1,10 @@
 package com.hcaepllams.game
 {
+	import com.hcaepllams.sqlDal.SQLDal;
+	import com.hcaepllams.sqlDal.SQLDalManager;
+	import com.hcaepllams.sqlDal.SQLResultEvent;
 	import com.hcaepllams.utils.MyDate;
+	import com.maclema.mysql.Statement;
 	
 	import flash.utils.Dictionary;
 
@@ -26,7 +30,7 @@ package com.hcaepllams.game
 				_instance = new GameManager();
 			}
 			return _instance;
-		}
+		}		
 		
 		public function getGameByDate(date:MyDate):Game
 		{
@@ -38,7 +42,16 @@ package com.hcaepllams.game
 			if (games[date.getMyDate()] == null)
 			{
 				games[date.getMyDate()] = new Game(date);
+				
+				var dal:SQLDal = SQLDalManager.instance.getADal();
+				dal.createANewGame(date);
+				dal.addEventListener(SQLResultEvent.ON_RESULT_GET, onGameCreated);
 			}
+		}
+		
+		private function onGameCreated(e:SQLResultEvent):void
+		{
+			trace ("game created");
 		}
 	}
 }

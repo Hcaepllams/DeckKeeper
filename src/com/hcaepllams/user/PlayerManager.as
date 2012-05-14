@@ -1,5 +1,10 @@
 package com.hcaepllams.user
 {
+	import com.hcaepllams.sqlDal.SQLDal;
+	import com.hcaepllams.sqlDal.SQLDalManager;
+	import com.hcaepllams.sqlDal.SQLResultEvent;
+	import com.maclema.mysql.ResultSet;
+	import com.maclema.mysql.Statement;
 	import com.sina.microblog.MicroBlog;
 	import com.sina.microblog.data.MicroBlogUser;
 	import com.sina.microblog.events.MicroBlogErrorEvent;
@@ -19,8 +24,8 @@ package com.hcaepllams.user
 		1984606585 Jacky
 		2218794712 Christin
 		 */
-		private const PLAYERS_NAME:Array = new Array("Will", "LM", "Jacky", "Cindy", "Sophie", "Candy", "Mavis", "Christie");
-		private var PLAYERS_UID:Dictionary = new Dictionary();
+		private var playersScreenNames:Array = new Array();
+		private var playersUID:Dictionary = new Dictionary();
 		
 		private static var _instance:PlayerManager;
 		
@@ -44,32 +49,40 @@ package com.hcaepllams.user
 		}
 		
 		public function initAllPlayers():void
+		{	
+			var sqlDal:SQLDal = SQLDalManager.instance.getADal();
+			sqlDal.getAllPlayers();			
+			sqlDal.addEventListener(SQLResultEvent.ON_RESULT_GET, onPlayerLoaded);
+			//loadAUser();
+		}
+		
+		public function onPlayerLoaded(e:SQLResultEvent):void
 		{
-			PLAYERS_UID["Will"] = "1808232384";
-			PLAYERS_UID["Sophie"] = "1895460147";
-			PLAYERS_UID["LM"] = "2188386820";
-			PLAYERS_UID["Mavis"] = "2017834591";
-			PLAYERS_UID["Candy"] = "1993550360";
-			PLAYERS_UID["Cindy"] = "1627316017";
-			PLAYERS_UID["Jacky"] = "1984606585";
-			PLAYERS_UID["Christie"] = "2218794712";
+			var rs:ResultSet = e.result as ResultSet;			
+			while (rs.next())
+			{
+				var name:String = rs.getString("playerCommonName");
+				playersScreenNames.push(name);
+				playersUID[name] = rs.getString("playerWeiboUID");
+			}
 			loadAUser();
 		}
-	
+		
 		private function loadAUser():void
 		{
-			if (initIndex > PLAYERS_NAME.length)
+			if (initIndex > playersScreenNames.length)
 				return;
-			var name:String = PLAYERS_NAME[initIndex];
+			var name:String = playersScreenNames[initIndex];
 			_mb.addEventListener(MicroBlogEvent.LOAD_USER_INFO_RESULT, onLoadUserComplete);
-			_mb.loadUserInfo(PLAYERS_UID[name]);
+			_mb.loadUserInfo(playersUID[name]);
 		}
 		
 		private function onLoadUserComplete(e:MicroBlogEvent):void
 		{
 			_mb.removeEventListener(MicroBlogEvent.LOAD_USER_INFO_RESULT, onLoadUserComplete);
 			var user:MicroBlogUser = e.result as MicroBlogUser;
-			var player:Player = new Player(getNameByUID(user.id), user);
+			var screenName:String = getNameByUID(user.id);
+			var player:Player = new Player(playersScreenNames.indexOf(screenName) + 1, screenName, user);
 			_fullPlayerList.push(player);
 			initIndex ++;
 			loadAUser();
@@ -77,9 +90,9 @@ package com.hcaepllams.user
 		
 		public function getNameByUID(uid:String):String
 		{
-			for (var key:String in PLAYERS_UID)
+			for (var key:String in playersUID)
 			{
-				if (PLAYERS_UID[key] == uid)
+				if (playersUID[key] == uid)
 				{
 					return key;
 				}
@@ -121,8 +134,8 @@ package com.hcaepllams.user
 			{
 				text = text + "@" + (_fullPlayerList[i] as Player).microBlogUser.screenName + " ";
 			}
-			return text;
-			//return "@Hcaepllams";
+			//return text;
+			return "@Hcaepllams";
 		}
 	}
 }

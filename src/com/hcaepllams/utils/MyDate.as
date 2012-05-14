@@ -10,7 +10,23 @@ package com.hcaepllams.utils
 		
 		public function getMyDate():String
 		{
-			return _date.fullYear + "." + _date.month + "." + _date.date;
+			var month:String = _date.month.toString();
+			var day:String = _date.day.toString();
+			if (_date.month < 10)
+			{
+				month = "0" + month;
+			}
+			
+			if (date.day < 10)
+			{
+				day = "0" + day;
+			}
+			return _date.fullYear + "-" + month + "-" + day + " 00:00:00";
+		}
+		
+		public function get date():Date
+		{
+			return _date;
 		}
 	}
 }

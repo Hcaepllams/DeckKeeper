@@ -4,6 +4,9 @@ package com.hcaepllams.command
 	import com.hcaepllams.game.GameManager;
 	import com.hcaepllams.message.Message;
 	import com.hcaepllams.message.MessageManager;
+	import com.hcaepllams.sqlDal.SQLDal;
+	import com.hcaepllams.sqlDal.SQLDalManager;
+	import com.hcaepllams.sqlDal.SQLResultEvent;
 	import com.hcaepllams.user.Player;
 	import com.hcaepllams.user.PlayerManager;
 	import com.hcaepllams.utils.MyDate;
@@ -54,6 +57,17 @@ package com.hcaepllams.command
 			MessageManager.instance.addAMessage(message);
 			var command:CommandAsk = new CommandAsk(_mb, null);
 			command.excute();
+			
+			var dal:SQLDal = SQLDalManager.instance.getADal();
+			dal.updateGame();			
+			dal.addEventListener(SQLResultEvent.ON_RESULT_GET, onGameUpdated);
+			//loadAUser();
 		}
+		
+		public function onGameUpdated(e:SQLResultEvent):void
+		{
+			trace (e.toString());
+		}
+		
 	}
 }
